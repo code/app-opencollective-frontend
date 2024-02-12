@@ -143,9 +143,7 @@ const BanAccountsWithSearch = () => {
 
   return (
     <div>
-      <Box width="276px">
-        <SearchBar placeholder="Search accounts" onSubmit={setSearchTerm} disabled={loading || submitting} />
-      </Box>
+      <SearchBar placeholder="Search accounts" onSubmit={setSearchTerm} disabled={loading || submitting} />
 
       {error ? (
         <MessageBoxGraphqlError error={error} />

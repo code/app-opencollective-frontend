@@ -4,7 +4,7 @@ import { isEmail, isURL } from 'validator';
 
 import { createError, ERROR, formatErrorMessage } from './errors';
 
-const messages = defineMessages({
+export const RICH_ERROR_MESSAGES = defineMessages({
   minLength: {
     id: 'FormError.minLengthRich',
     defaultMessage: 'Please use more than {count} characters',
@@ -15,6 +15,18 @@ const messages = defineMessages({
   },
   notInRange: {
     defaultMessage: 'Value must be between {min} and {max}',
+  },
+  format: {
+    id: 'FormError.pattern',
+    defaultMessage: 'This value is not formatted properly',
+  },
+  enum: {
+    id: 'FormError.enum',
+    defaultMessage: 'Must be one of: {options}',
+  },
+  invalidValue: {
+    id: 'FormError.InvalidValue',
+    defaultMessage: 'Invalid value',
   },
 });
 
@@ -55,10 +67,10 @@ export const verifyFieldLength = (intl, errors, data, field, min, max) => {
   if (!errors[field]) {
     const length = get(data, field)?.length || 0;
     if (length < min) {
-      const message = intl.formatMessage(messages.minLength, { count: min });
+      const message = intl.formatMessage(RICH_ERROR_MESSAGES.minLength, { count: min });
       set(errors, field, createError(ERROR.FORM_FIELD_MIN_LENGTH, { message, hasI18nMessage: true }));
     } else if (length > max) {
-      const message = intl.formatMessage(messages.maxLength, { count: max });
+      const message = intl.formatMessage(RICH_ERROR_MESSAGES.maxLength, { count: max });
       set(errors, field, createError(ERROR.FORM_FIELD_MAX_LENGTH, { message, hasI18nMessage: true }));
     }
   }
@@ -71,7 +83,10 @@ export const verifyValueInRange = (intl, errors, data, field, min, max, multipli
 
   // Ignore if there's already an error on the field
   if (!errors[field] && (value < min || value > max)) {
-    const message = intl.formatMessage(messages.notInRange, { min: min * multiplier, max: max * multiplier });
+    const message = intl.formatMessage(RICH_ERROR_MESSAGES.notInRange, {
+      min: min * multiplier,
+      max: max * multiplier,
+    });
     set(errors, field, createError(ERROR.FORM_FIELD_VALUE_NOT_IN_RANGE, { message, hasI18nMessage: true }));
   }
 
@@ -103,6 +118,12 @@ export const verifyURLPattern = (errors, data, field) => {
   }
 
   return errors;
+};
+
+export const verifyFormat = (errors, data, field, regex, customMessage) => {
+  if (!errors[field] && data[field] && !regex.test(data[field])) {
+    set(errors, field, createError(ERROR.FORM_FIELD_PATTERN, { message: customMessage }));
+  }
 };
 
 /**
