@@ -302,7 +302,7 @@ export default function TransactionsTable({
         onClickRow={(row, menuRef) => openDrawer(row.id, menuRef)}
         onHoverRow={row => setHoveredGroup(row?.original?.group ?? null)}
         rowHasIndicator={row => row.original.group === hoveredGroup}
-        fullWidth={hasDynamicTopBar}
+        fullWidth={true}
         mobileTableView
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibility}
